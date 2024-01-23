@@ -7,5 +7,12 @@
   },
   "scripts": {
     "start": "pm2 start server.js"
-  }
+  },
+  "name": "madcamp_week4_server",
+  "description": "KAIST 2023-winter MadCamp week4 Project repository",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
 }

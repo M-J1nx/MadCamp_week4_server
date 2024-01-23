@@ -16,25 +16,41 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-app.post('/login', (req, res) => {
-    const { user_id } = req.body;
+app.post('/result', (req, res) => {
+    const { userId, userScore, scoreDate } = req.body;
     const queryID = 'SELECT * FROM user WHERE user_id = (?)';
 
-    connection.query(queryID, [user_id], (error, results, fields) => {
+    connection.query(queryID, [userId], (error, results, fields) => {
+        const querySelectTop10 = 'SELECT * FROM user ORDER BY user_score DESC LIMIT 10';
         if (error) {
             console.error('Error:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
-
         if (results.length > 0) {
-            return res.json({ message: "already exist user" })
-        } else {
-            const querySignup = 'INSERT INTO user (user_id) VALUES (?)';
-            connection.query(querySignup, [user_id], (error, results, fields) => {
+            const querySignup = 'UPDATE user SET user_score = ?, score_date = ? WHERE user_id = ?';
+            connection.query(querySignup, [userScore, scoreDate, userId], (error, results, fields) => {
                 if (error) {
                 return res.status(500).json({ error: 'Internal Server Error' });
                 }
-                return res.json({ message: 'Assign success' }); 
+                connection.query(querySelectTop10, (error, selectResults, fields) => {
+                    if (error) {
+                        return res.status(500).json({ error: 'Internal Server Error' });
+                    }
+                    return res.json({ data : selectResults }); 
+                })
+            });
+        } else {
+            const querySignup = 'INSERT INTO user (user_id, user_score, score_date) VALUES (?, ?, ?)';
+            connection.query(querySignup, [userId, userScore, scoreDate], (error, results, fields) => {
+                if (error) {
+                return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                connection.query(querySelectTop10, (error, selectResults, fields) => {
+                    if (error) {
+                        return res.status(500).json({ error: 'Internal Server Error' });
+                    }
+                    return res.json({ data : selectResults }); 
+                })
             });
         };
     });

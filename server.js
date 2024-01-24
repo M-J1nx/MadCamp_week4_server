@@ -1,22 +1,24 @@
 const express = require('express');
 const mysql = require('mysql');
+const cors = require("cors");
 const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 const port = process.env.PORT || 3001;
 
 const connection = mysql.createConnection({
-    host: '13.124.147.237',
+    host: '15.164.214.108',
     user: 'MadCampWeek4',
-    password: '0000',
-    database: 'MadCampWeek4'
+    password: 'tj11021223',
+    database: 'madcampweek4'
 });
 
 connection.connect();
 
-app.post('/result', (req, res) => {
+app.post('/searchRanking', (req, res) => {
     const { userId, userScore, scoreDate } = req.body;
     const queryID = 'SELECT * FROM user WHERE user_id = (?)';
 
@@ -25,23 +27,9 @@ app.post('/result', (req, res) => {
         if (error) {
             console.error('Error:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
-        }
-        if (results.length > 0) {
-            const querySignup = 'UPDATE user SET user_score = ?, score_date = ? WHERE user_id = ?';
-            connection.query(querySignup, [userScore, scoreDate, userId], (error, results, fields) => {
-                if (error) {
-                return res.status(500).json({ error: 'Internal Server Error' });
-                }
-                connection.query(querySelectTop10, (error, selectResults, fields) => {
-                    if (error) {
-                        return res.status(500).json({ error: 'Internal Server Error' });
-                    }
-                    return res.json({ data : selectResults }); 
-                })
-            });
         } else {
-            const querySignup = 'INSERT INTO user (user_id, user_score, score_date) VALUES (?, ?, ?)';
-            connection.query(querySignup, [userId, userScore, scoreDate], (error, results, fields) => {
+            const queryAddScore = 'INSERT INTO user (user_id, user_score, score_date) VALUES (?, ?, ?)';
+            connection.query(queryAddScore, [userId, userScore, scoreDate], (error, results, fields) => {
                 if (error) {
                 return res.status(500).json({ error: 'Internal Server Error' });
                 }

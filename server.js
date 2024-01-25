@@ -9,9 +9,16 @@ app.use(cors());
 
 const port = process.env.PORT || 3001;
 
+// const connection = mysql.createConnection({
+//     host: '15.164.214.108',
+//     user: 'MadCampWeek4',
+//     password: 'tj11021223',
+//     database: 'madcampweek4'
+// });
+
 const connection = mysql.createConnection({
-    host: '15.164.214.108',
-    user: 'MadCampWeek4',
+    host: 'localhost',
+    user: 'root',
     password: 'tj11021223',
     database: 'madcampweek4'
 });
